@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futevôlei Areia Pro — Controle de Treinos (4 Semanas)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            sand: {
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+            },
+            ocean: {
+              400: '#38BDF8',
+              500: '#0EA5E9',
+              600: '#0284C7',
+            },
+            arena: {
+              950: '#080D18',
+              900: '#0F172A',
+              850: '#141E33',
+              800: '#1E293B',
+              700: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Scrollbar discreta e moderna */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0F172A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #F59E0B;
+    }
+    /* Animações suaves */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-arena-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-sand-500 selection:text-arena-950">
+
+  <!-- Barra Superior / Header -->
+  <header class="sticky top-0 z-30 bg-arena-900/90 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sand-500 to-amber-600 flex items-center justify-center text-arena-950 shadow-lg shadow-sand-500/20">
+          <!-- Ícone Bola / Sol Areia SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+            <path d="M2 12h20"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">FUTEVÔLEI <span class="text-sand-500">AREIA PRO</span></h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-ocean-500/15 text-ocean-400 border border-ocean-500/30">Ciclo 4 Semanas</span>
+          </div>
+          <p class="text-xs text-slate-400">Planejamento Quinta & Domingo • 10 Drills Integrados</p>
+        </div>
+      </div>
+
+      <!-- Navegação Principal -->
+      <nav class="flex items-center gap-1.5 bg-arena-950 p-1 rounded-xl border border-slate-800">
+        <button onclick="switchMainTab('cronograma')" id="tab-btn-cronograma" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-sand-500 text-arena-950 shadow">
+          Cronograma 4 Semanas
+        </button>
+        <button onclick="switchMainTab('biblioteca')" id="tab-btn-biblioteca" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white">
+          Biblioteca (10 Vídeos)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Dashboard / Painel de Controle Geral -->
+  <section class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+    <div class="bg-gradient-to-br from-arena-900 via-arena-850 to-arena-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        
+        <!-- Barra de Progresso Principal -->
+        <div class="flex-1 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-sand-500">Progresso Geral do Ciclo</span>
+              <h2 class="text-base sm:text-lg font-bold text-white">Evolução Quinta & Domingo (4 Semanas)</h2>
+            </div>
+            <span id="overall-percent" class="text-2xl sm:text-3xl font-black text-sand-500">0%</span>
+          </div>
+          <div class="w-full h-3.5 bg-arena-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+            <div id="overall-progress-bar" class="h-full rounded-full bg-gradient-to-r from-sand-500 via-amber-400 to-ocean-500 transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-400 pt-1">
+            <span><strong id="stats-days-done" class="text-white">0/8</strong> sessões concluídas</span>
+            <span><strong id="stats-drills-done" class="text-white">0/0</strong> exercícios feitos</span>
+            <span><strong id="stats-videos-linked" class="text-ocean-400">0/10</strong> vídeos compartilhados</span>
+          </div>
+        </div>
+
+        <!-- Cards de Métricas Rápidas + Backup -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+          <div class="flex-1 sm:flex-none bg-arena-950/80 border border-slate-800 rounded-xl px-4 py-3 min-w-[115px]">
+            <div class="text-[11px] font-semibold text-slate-400 uppercase">Quintas</div>
+            <div class="text-lg font-extrabold text-sand-400 mt-0.5"><span id="stats-thursday">0</span><span class="text-xs text-slate-500 font-normal"> / 4</span></div>
+          </div>
+          <div class="flex-1 sm:flex-none bg-arena-950/80 border border-slate-800 rounded-xl px-4 py-3 min-w-[115px]">
+            <div class="text-[11px] font-semibold text-slate-400 uppercase">Domingos</div>
+            <div class="text-lg font-extrabold text-ocean-400 mt-0.5"><span id="stats-sunday">0</span><span class="text-xs text-slate-500 font-normal"> / 4</span></div>
+          </div>
+
+          <!-- Ações de Backup / Reset -->
+          <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+            <button onclick="exportBackup()" title="Exportar Backup JSON" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-ocean-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span class="hidden xl:inline">Exportar</span>
+            </button>
+            <label title="Importar Backup JSON" class="cursor-pointer p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-sand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span class="hidden xl:inline">Importar</span>
+              <input type="file" accept=".json" onchange="importBackup(event)" class="hidden" />
+            </label>
+            <button onclick="openResetModal()" title="Resetar Progresso" class="p-2.5 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 border border-rose-800/60 transition-colors flex items-center gap-1.5 text-xs font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span class="hidden xl:inline">Resetar</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Conteúdo Principal -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
+
+    <!-- ABA 1: CRONOGRAMA DE 4 SEMANAS -->
+    <div id="view-cronograma" class="space-y-6 animate-fade-in">
+      
+      <!-- Seletor de Semanas -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <button onclick="selectWeek(1)" id="week-tab-1" class="week-tab-btn text-left p-3.5 rounded-xl border transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider">Semana 01</span>
+            <span id="week-badge-1" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0%</span>
+          </div>
+          <div class="text-sm font-bold mt-1 truncate">Base & Técnica</div>
+        </button>
+
+        <button onclick="selectWeek(2)" id="week-tab-2" class="week-tab-btn text-left p-3.5 rounded-xl border transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider">Semana 02</span>
+            <span id="week-badge-2" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0%</span>
+          </div>
+          <div class="text-sm font-bold mt-1 truncate">Passada & Repertório</div>
+        </button>
+
+        <button onclick="selectWeek(3)" id="week-tab-3" class="week-tab-btn text-left p-3.5 rounded-xl border transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider">Semana 03</span>
+            <span id="week-badge-3" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0%</span>
+          </div>
+          <div class="text-sm font-bold mt-1 truncate">Intensidade & Transição</div>
+        </button>
+
+        <button onclick="selectWeek(4)" id="week-tab-4" class="week-tab-btn text-left p-3.5 rounded-xl border transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider">Semana 04</span>
+            <span id="week-badge-4" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0%</span>
+          </div>
+          <div class="text-sm font-bold mt-1 truncate">Reação & Jogo Real</div>
+        </button>
+      </div>
+
+      <!-- Banner de Foco da Semana -->
+      <div id="week-header-banner" class="bg-arena-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="week-banner-tag" class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-sand-500/20 text-sand-400 border border-sand-500/30">SEMANA 1</span>
+            <h3 id="week-banner-title" class="text-lg font-extrabold text-white">Adaptação Técnica & Base de Fundamentos</h3>
+          </div>
+          <p id="week-banner-desc" class="text-sm text-slate-400 mt-1">Foco em postura corporal, transferência de força das pernas, educativas de chapa, passe de cabeça/peito, lobby básico e alavanca de ataque.</p>
+        </div>
+        <div class="text-xs text-slate-400 bg-arena-950 px-3.5 py-2.5 rounded-xl border border-slate-800 shrink-0">
+          <span class="block text-slate-500">Frequência semanal</span>
+          <strong class="text-white">Quinta-feira & Domingo</strong>
+        </div>
+      </div>
+
+      <!-- Grid dos 2 Treinos da Semana (Quinta e Domingo) -->
+      <div id="week-days-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Renderizado via JS -->
+      </div>
+    </div>
+
+    <!-- ABA 2: BIBLIOTECA DOS 10 VÍDEOS -->
+    <div id="view-biblioteca" class="hidden space-y-6 animate-fade-in">
+      <div class="bg-arena-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-extrabold text-white">Biblioteca Completa — 10 Vídeos de Referência</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Vincule os arquivos de vídeo do seu celular/PC ou cole um link para assistir direto na quadra.</p>
+        </div>
+
+        <!-- Filtro por Categoria -->
+        <div class="flex flex-wrap items-center gap-1.5" id="category-filters">
+          <button onclick="filterVideos('Todos')" data-cat="Todos" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-sand-500 text-arena-950">Todos (10)</button>
+          <button onclick="filterVideos('Defesa')" data-cat="Defesa" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Defesa</button>
+          <button onclick="filterVideos('Passe')" data-cat="Passe" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Passe</button>
+          <button onclick="filterVideos('Ataque')" data-cat="Ataque" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Ataque</button>
+          <button onclick="filterVideos('Fundamento/Chapa')" data-cat="Fundamento/Chapa" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Chapa</button>
+          <button onclick="filterVideos('Físico/Agilidade')" data-cat="Físico/Agilidade" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Físico/Agilidade</button>
+        </div>
+      </div>
+
+      <!-- Grid de Vídeos -->
+      <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Renderizado via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="border-t border-slate-800/80 bg-arena-900/60 py-4 px-4 text-center text-xs text-slate-500">
+    Dados compartilhados e públicos • todos que acessarem podem visualizar e alterar • Firebase Firestore / Storage
+  </footer>
+
+  <!-- MODAL: PLAYER DE VÍDEO E DETALHES DO DRILL -->
+  <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-5">
+    <div class="bg-arena-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl animate-fade-in">
+      <!-- Topo Modal -->
+      <div class="flex items-start justify-between gap-4 p-4 sm:p-5 border-b border-slate-800 sticky top-0 bg-arena-900 z-10">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="modal-video-num" class="px-2 py-0.5 rounded bg-sand-500 text-arena-950 text-xs font-black">VÍDEO 01</span>
+            <span id="modal-video-cat" class="px-2.5 py-0.5 rounded-full bg-ocean-500/15 text-ocean-400 border border-ocean-500/30 text-xs font-semibold">Categoria</span>
+          </div>
+          <h3 id="modal-video-title" class="text-lg sm:text-xl font-extrabold text-white mt-1.5">Título do Vídeo</h3>
+        </div>
+        <button onclick="closeVideoModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Corpo Modal -->
+      <div class="p-4 sm:p-5 space-y-5">
+        <!-- Área do Player -->
+        <div class="bg-arena-950 border border-slate-800 rounded-xl overflow-hidden">
+          <div id="modal-player-container" class="aspect-video w-full flex flex-col items-center justify-center bg-slate-950 relative">
+            <video id="modal-video-player" controls playsinline class="w-full h-full object-contain hidden"></video>
+            <div id="modal-video-placeholder" class="p-6 text-center space-y-3 max-w-md">
+              <div class="w-12 h-12 rounded-full bg-sand-500/15 text-sand-400 flex items-center justify-center mx-auto border border-sand-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white">Arquivo de referência: <span id="modal-ref-filename" class="text-sand-400 font-mono text-xs break-all"></span></p>
+                <p class="text-xs text-slate-400 mt-1">Envie um vídeo de até 100 MB para a nuvem ou cole uma URL direta (.mp4) para compartilhar com todos.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles de Vínculo do Arquivo -->
+          <div class="p-3.5 bg-arena-900/90 border-t border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-sand-500 hover:bg-sand-400 text-arena-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Enviar Vídeo
+              <input type="file" id="modal-file-input" accept="video/*" class="hidden" onchange="handleLocalVideoSelect(event)" />
+            </label>
+            <div class="flex-1 flex items-center gap-2">
+              <input type="text" id="modal-url-input" placeholder="Ou cole URL / caminho do vídeo..." class="w-full px-3 py-2 rounded-xl bg-arena-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-ocean-500" />
+              <button onclick="saveVideoUrlFromModal()" class="px-3 py-2 rounded-xl bg-ocean-500 hover:bg-ocean-400 text-arena-950 font-bold text-xs shrink-0 transition-colors">
+                Carregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descrição e Pontos-Chave -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-arena-950/70 border border-slate-800 rounded-xl p-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-sand-400 mb-2">Descrição do Exercício</h4>
+            <p id="modal-video-desc" class="text-sm text-slate-300 leading-relaxed"></p>
+          </div>
+          <div class="bg-arena-950/70 border border-slate-800 rounded-xl p-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-ocean-400 mb-2">Pontos-Chave de Execução</h4>
+            <ul id="modal-video-keypoints" class="space-y-1.5 text-sm text-slate-300"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE RESET (Sem usar confirm() nativo) -->
+  <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-arena-900 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl animate-fade-in">
+      <div class="flex items-center gap-3 text-rose-400">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-extrabold text-white">Resetar Progresso dos Treinos?</h3>
+          <p class="text-xs text-slate-400">Isso vai desmarcar os treinos e limpar as anotações compartilhadas de todos.</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeResetModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors">Cancelar</button>
+        <button onclick="confirmResetProgress()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition-colors">Sim, Resetar Tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de Notificação -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 bg-arena-800 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold animate-fade-in">
+    <span class="w-2 h-2 rounded-full bg-sand-500"></span>
+    <span id="toast-msg">Salvo com sucesso!</span>
+  </div>
+
+  <div id="connection-overlay" class="fixed inset-0 z-[60] flex items-center justify-center bg-arena-950/95 p-5">
+    <div class="max-w-md text-center">
+      <div class="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-sand-500"></div>
+      <p id="connection-message" class="text-sm font-semibold text-slate-200">Conectando ao Firebase...</p>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script>
+    // =========================================================================
+    // 1. DADOS DOS 10 VÍDEOS DE REFERÊNCIA
+    // =========================================================================
+    const VIDEOS_DATA = [
+      {
+        id: 1,
+        code: "VÍDEO 01",
+        fileName: "v09044g40000d2rm5d7og65neahctu4g.mp4",
+        title: "Deslocamento, Elástico e Transição na Rede",
+        category: "Físico/Agilidade",
+        description: "Trocas de passada laterais contornando cone, defesa de peixinho na areia, transições ofensivas na rede e trabalho de potência, defesa e finalização com resistência do elástico.",
+        keyPoints: [
+          "Manter o centro de gravidade baixo nas trocas de passada com cone.",
+          "Explodir contra a resistência do elástico sem perder o equilíbrio postural.",
+          "Recuperar rápido após defesa de peixinho para já entrar na transição de ataque."
+        ]
+      },
+      {
+        id: 2,
+        code: "VÍDEO 02",
+        fileName: "v09044g40000cgqn0sjc77ufn99a81qg.mp4",
+        title: "Defesa de Pingo e Agilidade na Areia",
+        category: "Defesa",
+        description: "Defesa de pingo curto com passada firme e avanço rápido para frente, seguida de aceleração e movimentação em zigue-zague entre marcações na areia fofa.",
+        keyPoints: [
+          "Leitura antecipada do pingo para atacar a bola antes que caia.",
+          "Apoio firme na perna da frente ao ajoelhar/avançar na defesa.",
+          "Passos curtos e frequentes no zigue-zague para não afundar na areia."
+        ]
+      },
+      {
+        id: 3,
+        code: "VÍDEO 03",
+        fileName: "v14044g50000cvil34vog65o51u1jlng.mp4",
+        title: "Passe de Cabeça Controlado",
+        category: "Passe",
+        description: "Técnica de passe de cabeça com controle de altura e direção, gerando impulsão a partir da flexão e extensão das pernas e joelhos, evitando jogar tronco, quadril ou pescoço para trás.",
+        keyPoints: [
+          "A força vem do joelho e da perna (agacha curto e sobe travado).",
+          "Travar pescoço, tronco e manter braços firmes como referência.",
+          "Não quebrar o quadril nem jogar as costas para trás no contato."
+        ]
+      },
+      {
+        id: 4,
+        code: "VÍDEO 04",
+        fileName: "v14044g50000d9utapfog65lavllfum0.mp4",
+        title: "Variação de Ataque com Comando no Salto",
+        category: "Ataque",
+        description: "Parceiro ou treinador lança a bola e grita o destino do ataque exatamente no momento do salto (pingo para trás, paralela, diagonal curta, meio e diagonal longa), executado em 3 a 5 séries de 10 ataques ao final do treino.",
+        keyPoints: [
+          "Saltar equilibrado e esperar o comando no ar para decidir o golpe.",
+          "Variar entre pingo para trás, paralela, diagonal curta, meio e diagonal longa.",
+          "Fazer de 3 a 5 séries de 10 repetições no fim do treino para automatizar."
+        ]
+      },
+      {
+        id: 5,
+        code: "VÍDEO 05",
+        fileName: "v09044g40000cvenqbvog65q2i0v84j0.mp4",
+        title: "Defesa de Lobby em 3 Progressões",
+        category: "Defesa",
+        description: "Sequência pedagógica para defender bolas encobrindo no fundo: deslocamento lateral, giro de tronco somente após a bola ultrapassar o corpo e finalização ajoelhado em 3 etapas evolutivas.",
+        keyPoints: [
+          "Deslocar lateralmente e girar o corpo apenas depois que a bola passar.",
+          "Progressão 1: ajoelhar e segurar a bola com as mãos no tempo certo.",
+          "Progressão 2 e 3: amortecer com peito/ponta do pé e inclinar leve o tronco para levantar."
+        ]
+      },
+      {
+        id: 6,
+        code: "VÍDEO 06",
+        fileName: "v14044g50000dae23lfog65gkva5rmfg.mp4",
+        title: "Entrada na Bola e Passe de Peito (Progressão com Cargas)",
+        category: "Passe",
+        description: "Educativo completo de passe de peito focado na força vinda das pernas e no ponto ideal de contato: inicia com bola presa, bola auxiliar para estabilizar o tronco, bola de água (4 L), bola leve (500 ml) e termina com a bola oficial e mini jogo.",
+        keyPoints: [
+          "Usar bola auxiliar presa no peito para entender que a perna move e o tronco estabiliza.",
+          "A bola com água (4 L) educa a contração do core e a transferência do chão para cima.",
+          "Transferir a mesma mecânica limpa para a bola leve e depois para a bola de futevôlei."
+        ]
+      },
+      {
+        id: 7,
+        code: "VÍDEO 07",
+        fileName: "Z_Sodr_video_no_watermark.mp4",
+        title: "Construção da Passada e Levantamento de Peito",
+        category: "Passe",
+        description: "Lapidação da passada de entrada para recepção e levantamento de peito, enfatizando a contração do abdômen/tronco e o direcionamento preciso da bola para o ataque do parceiro.",
+        keyPoints: [
+          "Entrar na bola com passada organizada antes de projetar o peito.",
+          "Contrair o tronco no impacto para não deixar a bola espirrar.",
+          "Direcionar o peito para o alvo do levantamento (não apenas rebater para cima)."
+        ]
+      },
+      {
+        id: 8,
+        code: "VÍDEO 08",
+        fileName: "v09044g40000d03ph8nog65rpkh2ufpg.mp4",
+        title: "Trabalho de Solo, Core e Impulsão na Rede",
+        category: "Físico/Agilidade",
+        description: "Exercícios de solo com elevação de pernas e quadril para ativação de core/posteriores combinados com ações explosivas de impulsão e finalização junto à rede.",
+        keyPoints: [
+          "Ativar bem glúteos, posteriores e abdômen no exercício de solo.",
+          "Conectar a força de core com a explosão vertical na rede.",
+          "Executar finalizações variadas (chapa, peito de pé e calcanhar) com controle."
+        ]
+      },
+      {
+        id: 9,
+        code: "VÍDEO 09",
+        fileName: "v09044g40000cqke36fog65mllr7hd2g.mp4",
+        title: "Correção da Chapa em 3 Níveis",
+        category: "Fundamento/Chapa",
+        description: "Três educativos progressivos para limpar a técnica da chapinha: 1) chapa sentado para reduzir graus de liberdade; 2) chapa levantando do agachamento; 3) salto unilateral com chapa alternando os dois pés.",
+        keyPoints: [
+          "Nível 1 (Sentado): focar apenas no ajuste do tornozelo e face interna do pé.",
+          "Nível 2 (Agachado): ganhar consciência corporal de estar embaixo da bola.",
+          "Nível 3 (Salto unilateral): treinar equilíbrio, impulsão e calibrar os dois pés."
+        ]
+      },
+      {
+        id: 10,
+        code: "VÍDEO 10",
+        fileName: "video_1.mp4",
+        title: "Sequência Progressiva de Ataque na Rede",
+        category: "Ataque",
+        description: "Construção completa do ataque de cabeça na rede em 4 passos: alavanca de pescoço/tronco junto à fita, ajuste da passada e subida vertical com braços, ataque agressivo próximo à fita partindo parado e ataque completo com passada.",
+        keyPoints: [
+          "Trabalhar a alavanca de pescoço e tronco junto à fita antes de saltar.",
+          "Coordenar a passada de aproximação com a elevação explosiva dos braços.",
+          "Unir passada + entrada na rede + ataque agressivo próximo à fita."
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. CRONOGRAMA ESTRUTURADO DE 4 SEMANAS (QUINTA E DOMINGO)
+    // =========================================================================
+    const WEEKS_PLAN = [
+      {
+        week: 1,
+        shortTitle: "Base & Técnica",
+        title: "Semana 1 — Adaptação Técnica & Base de Fundamentos",
+        description: "Construção da mecânica limpa sem pressa: postura corporal, transferência de força das pernas, educativas de chapa, passe de cabeça/peito, lobby inicial e alavanca de ataque.",
+        days: [
+          {
+            id: "w1-thu",
+            dayName: "Quinta-feira",
+            focus: "Fundamentos de Base: Chapa, Cabeça & Peito",
+            badgeColor: "sand",
+            blocks: [
+              {
+                blockName: "1. Aquecimento & Educativo de Chapa",
+                drills: [
+                  { id: "w1-thu-d1", videoId: 9, name: "Correção da Chapa (Níveis 1 e 2: Sentado + Agachado)", sets: "3 séries de 12 reps cada pé" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Técnico — Passe de Cabeça e Peito",
+                drills: [
+                  { id: "w1-thu-d2", videoId: 3, name: "Passe de Cabeça Controlado (Base de pernas e tronco travado)", sets: "4 séries de 15 passes" },
+                  { id: "w1-thu-d3", videoId: 6, name: "Entrada na Bola e Passe de Peito (Bola presa / auxiliar → bola normal)", sets: "4 séries de 10 reps" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento Técnico",
+                drills: [
+                  { id: "w1-thu-d4", videoId: 7, name: "Passada e Levantamento de Peito direcionado + Controle em dupla", sets: "15 min contínuos" }
+                ]
+              }
+            ]
+          },
+          {
+            id: "w1-sun",
+            dayName: "Domingo",
+            focus: "Defesa Inicial, Mobilidade & Alavanca de Ataque",
+            badgeColor: "ocean",
+            blocks: [
+              {
+                blockName: "1. Aquecimento & Ativação de Solo",
+                drills: [
+                  { id: "w1-sun-d1", videoId: 8, name: "Trabalho de Solo (Elevação de pernas/quadril) + Mobilidade", sets: "3 séries de 15 reps" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Defensivo — Pingo e Lobby Básico",
+                drills: [
+                  { id: "w1-sun-d2", videoId: 2, name: "Defesa de Pingo com Passada (Ritmo controlado)", sets: "3 séries de 10 bolas" },
+                  { id: "w1-sun-d3", videoId: 5, name: "Defesa de Lobby (Progressões 1 e 2: giro + segurar/amortecer)", sets: "3 séries de 8 bolas cada lado" }
+                ]
+              },
+              {
+                blockName: "3. Bloco de Rede & Fechamento",
+                drills: [
+                  { id: "w1-sun-d4", videoId: 10, name: "Sequência de Ataque na Rede (Etapas 1 e 2: alavanca + passada vertical)", sets: "3 séries de 10 ataques" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        week: 2,
+        shortTitle: "Passada & Repertório",
+        title: "Semana 2 — Coordenação, Passada & Repertório de Ataque",
+        description: "Evolução das educativas para o gesto completo: salto unilateral com chapa, passada de levantamento, defesa de lobby completa e início das variações de ataque com comando.",
+        days: [
+          {
+            id: "w2-thu",
+            dayName: "Quinta-feira",
+            focus: "Chapa Dinâmica, Levantamento & Variação de Ataque",
+            badgeColor: "sand",
+            blocks: [
+              {
+                blockName: "1. Aquecimento & Equilíbrio",
+                drills: [
+                  { id: "w2-thu-d1", videoId: 9, name: "Correção da Chapa (Nível 3: Salto unilateral nos dois pés)", sets: "3 séries de 10 reps cada pé" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Técnico — Construção de Jogada",
+                drills: [
+                  { id: "w2-thu-d2", videoId: 7, name: "Construção da Passada e Levantamento de Peito (Recepção + levantamento)", sets: "4 séries de 12 reps" },
+                  { id: "w2-thu-d3", videoId: 3, name: "Passe de Cabeça Controlado em deslocamento curto", sets: "3 séries de 15 passes" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento Ofensivo",
+                drills: [
+                  { id: "w2-thu-d4", videoId: 4, name: "Variação de Ataque com Comando no Salto (Introdução: paralela, diagonal e pingo)", sets: "3 séries de 10 ataques" }
+                ]
+              }
+            ]
+          },
+          {
+            id: "w2-sun",
+            dayName: "Domingo",
+            focus: "Agilidade, Lobby Completo & Entrada na Rede",
+            badgeColor: "ocean",
+            blocks: [
+              {
+                blockName: "1. Aquecimento & Deslocamento",
+                drills: [
+                  { id: "w2-sun-d1", videoId: 1, name: "Deslocamento Lateral com Cone + Transição leve na rede", sets: "4 séries de 30 seg" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Defensivo & Agilidade",
+                drills: [
+                  { id: "w2-sun-d2", videoId: 2, name: "Defesa de Pingo com Passada + Zigue-zague entre marcações", sets: "4 séries de 8 bolas" },
+                  { id: "w2-sun-d3", videoId: 5, name: "Defesa de Lobby (Progressão 3: peito do pé inclinando tronco para levantar)", sets: "4 séries de 8 bolas" }
+                ]
+              },
+              {
+                blockName: "3. Bloco de Rede & Fechamento",
+                drills: [
+                  { id: "w2-sun-d4", videoId: 10, name: "Sequência de Ataque na Rede (Etapas 3 e 4: bola na fita + passada completa)", sets: "4 séries de 8 ataques" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        week: 3,
+        shortTitle: "Intensidade & Transição",
+        title: "Semana 3 — Intensidade na Areia, Elástico & Transições",
+        description: "Aumento de volume e exigência física na areia fofa: uso do elástico, transições defesa-ataque, passe sob fadiga e ataques agressivos próximos à fita.",
+        days: [
+          {
+            id: "w3-thu",
+            dayName: "Quinta-feira",
+            focus: "Precisão sob Fadiga & Ataques na Fita",
+            badgeColor: "sand",
+            blocks: [
+              {
+                blockName: "1. Aquecimento Técnico",
+                drills: [
+                  { id: "w3-thu-d1", videoId: 6, name: "Passe de Peito com Carga (Bola de água / leve → bola oficial)", sets: "4 séries de 10 reps" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Principal — Rede & Transição",
+                drills: [
+                  { id: "w3-thu-d2", videoId: 10, name: "Ataque Agressivo Próximo à Fita (Passada + entrada + ataque)", sets: "4 séries de 10 ataques" },
+                  { id: "w3-thu-d3", videoId: 8, name: "Core de Solo + Impulsão Explosiva e Finalização na Rede", sets: "3 séries de 12 reps" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento — Repertório Completo",
+                drills: [
+                  { id: "w3-thu-d4", videoId: 4, name: "Variação de Ataque com Comando no Salto (Todos os 5 golpes)", sets: "4 séries de 10 ataques" }
+                ]
+              }
+            ]
+          },
+          {
+            id: "w3-sun",
+            dayName: "Domingo",
+            focus: "Explosão com Elástico, Peixinho & Defesa Total",
+            badgeColor: "ocean",
+            blocks: [
+              {
+                blockName: "1. Aquecimento & Agilidade",
+                drills: [
+                  { id: "w3-sun-d1", videoId: 2, name: "Defesa de Pingo Acelerada + Zigue-zague em velocidade máxima", sets: "4 séries de 10 bolas" }
+                ]
+              },
+              {
+                blockName: "2. Bloco de Potência & Defesa",
+                drills: [
+                  { id: "w3-sun-d2", videoId: 1, name: "Treino com Elástico: Deslocamento, Defesa de Peixinho e Transição", sets: "4 séries de 8 ações" },
+                  { id: "w3-sun-d3", videoId: 5, name: "Defesa de Lobby em Velocidade (Direita e esquerda alternadas)", sets: "4 séries de 10 bolas" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento Competitivo",
+                drills: [
+                  { id: "w3-sun-d4", videoId: 7, name: "Sequência Recepção + Levantamento de Peito + Mini Jogo", sets: "20 min de jogo condicionado" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        week: 4,
+        shortTitle: "Reação & Jogo Real",
+        title: "Semana 4 — Consolidação, Velocidade de Reação & Simulação",
+        description: "Semana de pico técnico e competitivo: combinação de todos os fundamentos em ritmo de partida, volume máximo na variação de ataque e mini jogos valendo ponto.",
+        days: [
+          {
+            id: "w4-thu",
+            dayName: "Quinta-feira",
+            focus: "Refinamento Fino & Volume Máximo de Ataque",
+            badgeColor: "sand",
+            blocks: [
+              {
+                blockName: "1. Aquecimento Completo",
+                drills: [
+                  { id: "w4-thu-d1", videoId: 9, name: "Combo de Chapa (Agachado + Salto unilateral alternando pés)", sets: "3 séries de 12 reps" },
+                  { id: "w4-thu-d2", videoId: 3, name: "Passe de Cabeça Controlado (Alvo curto e longo)", sets: "3 séries de 15 passes" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Principal — Construção Ofensiva",
+                drills: [
+                  { id: "w4-thu-d3", videoId: 7, name: "Levantamento de Peito + Ataque na Fita em sequência contínua", sets: "4 séries de 10 jogadas" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento — Desafio de Ataque",
+                drills: [
+                  { id: "w4-thu-d4", videoId: 4, name: "Variação de Ataque com Comando no Salto (Volume máximo)", sets: "5 séries de 10 ataques" }
+                ]
+              }
+            ]
+          },
+          {
+            id: "w4-sun",
+            dayName: "Domingo",
+            focus: "Simulação de Jogo, Defesa Extrema & Fechamento do Ciclo",
+            badgeColor: "ocean",
+            blocks: [
+              {
+                blockName: "1. Aquecimento Explosivo",
+                drills: [
+                  { id: "w4-sun-d1", videoId: 1, name: "Circuito Cone + Elástico + Peixinho + Finalização na Rede", sets: "4 séries de 6 repetições" }
+                ]
+              },
+              {
+                blockName: "2. Bloco Defesa-Contra-Ataque",
+                drills: [
+                  { id: "w4-sun-d2", videoId: 2, name: "Defesa de Pingo + Zigue-zague + Contra-ataque", sets: "3 séries de 8 bolas" },
+                  { id: "w4-sun-d3", videoId: 5, name: "Defesa de Lobby + Levantamento para Ataque", sets: "3 séries de 8 bolas" }
+                ]
+              },
+              {
+                blockName: "3. Fechamento do Ciclo (Jogo Real)",
+                drills: [
+                  { id: "w4-sun-d4", videoId: 8, name: "Mini Jogo Competitivo (Aplicando chapa, passe de peito/cabeça e variação de ataque)", sets: "2 sets de 15 pontos" }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 3. ESTADO COMPARTILHADO DA APLICAÇÃO
+    // =========================================================================
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyAr1pxKHETKSm5Zak4cgINFJZoc6Ay0o6M",
+      authDomain: "treinoftv.firebaseapp.com",
+      projectId: "treinoftv",
+      storageBucket: "treinoftv.firebasestorage.app",
+      messagingSenderId: "1030204059622",
+      appId: "1:1030204059622:web:de22c6a68c300d0c5c3027",
+      measurementId: "G-X0E4J6M26J"
+    };
+
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const firestore = firebase.firestore();
+    const videoStorage = firebase.storage();
+    const sharedStateRef = firestore.collection("shared").doc("appState");
+
+    let appState = {
+      selectedWeek: 1,
+      activeMainTab: "cronograma",
+      categoryFilter: "Todos",
+      completedDrills: {}, // { "w1-thu-d1": true }
+      completedDays: {},   // { "w1-thu": true }
+      dayNotes: {},        // { "w1-thu": "Texto..." }
+      videoLinks: {},      // { 1: "URL compartilhada" }
+      videoNames: {}       // { 1: "nome-do-arquivo.mp4" }
+    };
+
+    let currentModalVideoId = null;
+    let isSharedStateReady = false;
+    let isApplyingRemoteState = false;
+    let saveTimer = null;
+    let writeQueue = Promise.resolve();
+
+    function setConnectionMessage(message, isError = false) {
+      const messageEl = document.getElementById("connection-message");
+      messageEl.textContent = message;
+      messageEl.className = `text-sm font-semibold ${isError ? "text-rose-300" : "text-slate-200"}`;
+      const spinner = document.querySelector("#connection-overlay .animate-spin");
+      if (spinner) spinner.classList.toggle("hidden", isError);
+    }
+
+    function saveState() {
+      updateDashboardStats();
+      if (!isSharedStateReady || isApplyingRemoteState) return;
+
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        persistState().catch(() => {});
+      }, 400);
+    }
+
+    function persistState() {
+      const stateToSave = JSON.parse(JSON.stringify(appState));
+      const saveOperation = writeQueue.then(() => sharedStateRef.set({
+        state: stateToSave,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }));
+      writeQueue = saveOperation.catch(error => {
+        console.error("Erro ao salvar dados no Firestore:", error);
+        showToast("Não foi possível salvar no Firebase. Verifique a conexão e as regras.");
+      });
+      return saveOperation;
+    }
+
+    async function saveStateNow() {
+      updateDashboardStats();
+      if (!isSharedStateReady) throw new Error("Firestore ainda não está pronto.");
+      clearTimeout(saveTimer);
+      await persistState();
+    }
+
+    function subscribeToSharedState() {
+      let firstSnapshot = true;
+      sharedStateRef.onSnapshot(snapshot => {
+        const hadInitialSnapshot = firstSnapshot;
+        firstSnapshot = false;
+        const hasRemoteState = snapshot.exists && snapshot.data().state;
+
+        if (hasRemoteState) {
+          const remoteState = snapshot.data().state;
+          const updatedState = { ...appState, ...remoteState };
+          if (hadInitialSnapshot || JSON.stringify(updatedState) !== JSON.stringify(appState)) {
+            isApplyingRemoteState = true;
+            try {
+              appState = updatedState;
+              switchMainTab(appState.activeMainTab || "cronograma");
+              renderWeekView();
+              if (appState.activeMainTab === "biblioteca") renderVideosLibrary();
+            } finally {
+              isApplyingRemoteState = false;
+            }
+          }
+        } else if (hadInitialSnapshot) {
+          isApplyingRemoteState = true;
+          try {
+            switchMainTab(appState.activeMainTab || "cronograma");
+            renderWeekView();
+          } finally {
+            isApplyingRemoteState = false;
+          }
+        }
+
+        isSharedStateReady = true;
+        document.getElementById("connection-overlay").classList.add("hidden");
+        if (!hasRemoteState && hadInitialSnapshot) saveState();
+        updateDashboardStats();
+      }, error => {
+        console.error("Erro ao conectar ao Firestore:", error);
+        setConnectionMessage("Não foi possível conectar ao Firebase. Confira a configuração e as regras de acesso.", true);
+        if (isSharedStateReady) showToast("Conexão com Firebase perdida.");
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    // =========================================================================
+    // 4. NAVEGAÇÃO E RENDERIZAÇÃO
+    // =========================================================================
+    function switchMainTab(tab) {
+      appState.activeMainTab = tab;
+      const btnCrono = document.getElementById("tab-btn-cronograma");
+      const btnBib = document.getElementById("tab-btn-biblioteca");
+      const viewCrono = document.getElementById("view-cronograma");
+      const viewBib = document.getElementById("view-biblioteca");
+
+      if (tab === "cronograma") {
+        btnCrono.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-sand-500 text-arena-950 shadow";
+        btnBib.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white";
+        viewCrono.classList.remove("hidden");
+        viewBib.classList.add("hidden");
+      } else {
+        btnBib.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-sand-500 text-arena-950 shadow";
+        btnCrono.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white";
+        viewBib.classList.remove("hidden");
+        viewCrono.classList.add("hidden");
+        renderVideosLibrary();
+      }
+      saveState();
+    }
+
+    function selectWeek(weekNum) {
+      appState.selectedWeek = weekNum;
+      saveState();
+      renderWeekView();
+    }
+
+    function renderWeekView() {
+      const wNum = appState.selectedWeek;
+      const weekObj = WEEKS_PLAN.find(w => w.week === wNum);
+
+      // Atualiza estilo das abas de semana
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`week-tab-${i}`);
+        if (i === wNum) {
+          btn.className = "week-tab-btn text-left p-3.5 rounded-xl border transition-all bg-arena-850 border-sand-500 text-white shadow-lg shadow-sand-500/10";
+        } else {
+          btn.className = "week-tab-btn text-left p-3.5 rounded-xl border transition-all bg-arena-900/70 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200";
+        }
+      }
+
+      // Atualiza banner da semana
+      document.getElementById("week-banner-tag").textContent = `SEMANA 0${weekObj.week}`;
+      document.getElementById("week-banner-title").textContent = weekObj.title;
+      document.getElementById("week-banner-desc").textContent = weekObj.description;
+
+      // Renderiza os cards de Quinta e Domingo
+      const container = document.getElementById("week-days-container");
+      container.innerHTML = "";
+
+      weekObj.days.forEach(day => {
+        const isDayDone = !!appState.completedDays[day.id];
+        const noteText = appState.dayNotes[day.id] || "";
+        const isThursday = day.badgeColor === "sand";
+
+        const accentBorder = isDayDone
+          ? "border-emerald-500/60"
+          : (isThursday ? "border-slate-800 hover:border-sand-500/40" : "border-slate-800 hover:border-ocean-500/40");
+
+        const dayTagClasses = isThursday
+          ? "bg-sand-500/15 text-sand-400 border-sand-500/30"
+          : "bg-ocean-500/15 text-ocean-400 border-ocean-500/30";
+
+        let blocksHtml = "";
+        day.blocks.forEach(block => {
+          let drillsHtml = "";
+          block.drills.forEach(drill => {
+            const video = VIDEOS_DATA.find(v => v.id === drill.videoId);
+            const checked = !!appState.completedDrills[drill.id];
+            drillsHtml += `
+              <div class="p-3 rounded-xl bg-arena-950/90 border ${checked ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-800/90'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all">
+                <label class="flex items-start gap-3 cursor-pointer flex-1 select-none">
+                  <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleDrill('${drill.id}', '${day.id}')" class="mt-1 w-4 h-4 rounded accent-sand-500 cursor-pointer shrink-0" />
+                  <div class="space-y-1">
+                    <div class="text-sm font-semibold ${checked ? 'line-through text-slate-500' : 'text-slate-100'} leading-snug">
+                      ${drill.name}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                      <span class="px-2 py-0.5 rounded bg-slate-800/90 text-slate-300 font-medium">${drill.sets}</span>
+                      <span class="text-slate-500">• ${video.code}</span>
+                    </div>
+                  </div>
+                </label>
+                <button onclick="openVideoModal(${video.id})" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-sand-500 text-slate-200 hover:text-arena-950 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Ver Vídeo
+                </button>
+              </div>
+            `;
+          });
+
+          blocksHtml += `
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">${block.blockName}</h4>
+              <div class="space-y-2">${drillsHtml}</div>
+            </div>
+          `;
+        });
+
+        const cardHtml = `
+          <div class="bg-arena-900 border ${accentBorder} rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-5 shadow-lg transition-all">
+            <div class="space-y-4">
+              <!-- Cabeçalho do Dia -->
+              <div class="flex items-start justify-between gap-3 pb-3.5 border-b border-slate-800">
+                <div>
+                  <span class="inline-block px-2.5 py-0.5 rounded-md text-xs font-extrabold border ${dayTagClasses}">
+                    ${day.dayName.toUpperCase()}
+                  </span>
+                  <h3 class="text-base sm:text-lg font-extrabold text-white mt-1.5">${day.focus}</h3>
+                </div>
+                <label class="cursor-pointer select-none flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all shrink-0 ${isDayDone ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300' : 'bg-arena-950 border-slate-700 text-slate-300 hover:border-slate-600'}">
+                  <input type="checkbox" ${isDayDone ? 'checked' : ''} onchange="toggleDay('${day.id}')" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+                  <span>${isDayDone ? 'Treino Concluído' : 'Concluir Dia'}</span>
+                </label>
+              </div>
+
+              <!-- Blocos de Exercícios -->
+              <div class="space-y-4">
+                ${blocksHtml}
+              </div>
+            </div>
+
+            <!-- Anotações Pessoais do Treino -->
+            <div class="pt-3 border-t border-slate-800/80">
+              <label class="block text-xs font-bold text-slate-400 mb-1.5">Anotações do treino (sensações, ajustes técnicos, parceiro):</label>
+              <textarea
+                rows="2"
+                placeholder="Ex: Hoje a chapinha com a esquerda encaixou melhor; focar em não jogar o tronco para trás no passe de cabeça..."
+                oninput="saveDayNote('${day.id}', this.value)"
+                class="w-full rounded-xl bg-arena-950 border border-slate-800 focus:border-sand-500 focus:outline-none p-2.5 text-xs text-slate-200 placeholder-slate-600 resize-none"
+              >${escapeHtml(noteText)}</textarea>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML("beforeend", cardHtml);
+      });
+
+      updateDashboardStats();
+    }
+
+    // =========================================================================
+    // 5. BIBLIOTECA DOS 10 VÍDEOS
+    // =========================================================================
+    function filterVideos(category) {
+      appState.categoryFilter = category;
+      document.querySelectorAll(".cat-filter-btn").forEach(btn => {
+        if (btn.dataset.cat === category) {
+          btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-sand-500 text-arena-950";
+        } else {
+          btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white";
+        }
+      });
+      renderVideosLibrary();
+    }
+
+    function renderVideosLibrary() {
+      const grid = document.getElementById("videos-grid");
+      grid.innerHTML = "";
+
+      const filtered = appState.categoryFilter === "Todos"
+        ? VIDEOS_DATA
+        : VIDEOS_DATA.filter(v => v.category === appState.categoryFilter);
+
+      filtered.forEach(video => {
+        const savedLink = appState.videoLinks[video.id] || "";
+        const displayName = appState.videoNames[video.id] || savedLink || video.fileName;
+        const isLinked = savedLink.length > 0;
+
+        const cardHtml = `
+          <div class="bg-arena-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 shadow-md transition-all">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-sand-500 text-arena-950 text-xs font-black">${video.code}</span>
+                  <span class="px-2.5 py-0.5 rounded-full bg-ocean-500/15 text-ocean-400 border border-ocean-500/30 text-xs font-semibold">${video.category}</span>
+                </div>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md ${isLinked ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'}">
+                  ${isLinked ? '● Vídeo Vinculado' : '○ Arquivo de Referência'}
+                </span>
+              </div>
+
+              <div>
+                <h3 class="text-base font-extrabold text-white">${video.title}</h3>
+                <p class="text-[11px] font-mono text-sand-400/90 mt-0.5 break-all">Arquivo: ${escapeHtml(displayName)}</p>
+              </div>
+
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${video.description}</p>
+
+              <div class="bg-arena-950/70 border border-slate-800/80 rounded-xl p-3">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Pontos-Chave</div>
+                <ul class="space-y-1 text-xs text-slate-300">
+                  ${video.keyPoints.map(pt => `<li class="flex items-start gap-1.5"><span class="text-sand-500 font-bold">•</span><span>${pt}</span></li>`).join("")}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Ações do Card de Vídeo -->
+            <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center gap-2">
+              <button onclick="openVideoModal(${video.id})" class="flex-1 px-3.5 py-2.5 rounded-xl bg-sand-500 hover:bg-sand-400 text-arena-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Abrir Player & Detalhes
+              </button>
+              <label class="cursor-pointer px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-ocean-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Vincular Arquivo
+                <input type="file" accept="video/*" class="hidden" onchange="quickBindVideoFile(event, ${video.id})" />
+              </label>
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML("beforeend", cardHtml);
+      });
+    }
+
+    // =========================================================================
+    // 6. PLAYER MODAL & VÍNCULO DE VÍDEOS LOCAIS / URLS
+    // =========================================================================
+    function openVideoModal(videoId) {
+      currentModalVideoId = videoId;
+      const video = VIDEOS_DATA.find(v => v.id === videoId);
+      if (!video) return;
+
+      document.getElementById("modal-video-num").textContent = video.code;
+      document.getElementById("modal-video-cat").textContent = video.category;
+      document.getElementById("modal-video-title").textContent = video.title;
+      document.getElementById("modal-ref-filename").textContent = appState.videoNames[videoId] || appState.videoLinks[videoId] || video.fileName;
+      document.getElementById("modal-video-desc").textContent = video.description;
+      document.getElementById("modal-url-input").value = appState.videoLinks[videoId] || "";
+
+      const kpList = document.getElementById("modal-video-keypoints");
+      kpList.innerHTML = video.keyPoints.map(pt =>
+        `<li class="flex items-start gap-2"><span class="text-ocean-400 font-bold">✓</span><span>${pt}</span></li>`
+      ).join("");
+
+      const player = document.getElementById("modal-video-player");
+      const placeholder = document.getElementById("modal-video-placeholder");
+
+      const savedUrl = appState.videoLinks[videoId];
+
+      if (savedUrl && (savedUrl.startsWith("http://") || savedUrl.startsWith("https://"))) {
+        player.src = savedUrl;
+        player.classList.remove("hidden");
+        placeholder.classList.add("hidden");
+      } else {
+        player.pause();
+        player.removeAttribute("src");
+        player.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+      }
+
+      const modal = document.getElementById("video-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeVideoModal() {
+      const player = document.getElementById("modal-video-player");
+      player.pause();
+      const modal = document.getElementById("video-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      currentModalVideoId = null;
+    }
+
+    async function uploadVideoFile(file, videoId) {
+      const hasVideoExtension = /\.(mp4|mov|webm|m4v|avi|mkv)$/i.test(file.name);
+      if (!file.type.startsWith("video/") && !hasVideoExtension) {
+        showToast("Selecione um arquivo de vídeo válido.");
+        return;
+      }
+      if (file.size > 100 * 1024 * 1024) {
+        showToast("O vídeo deve ter no máximo 100 MB.");
+        return;
+      }
+
+      const safeFileName = file.name.replace(/[^\w.-]/g, "_");
+      const storagePath = `videos/${videoId}/${Date.now()}-${safeFileName}`;
+      const videoRef = videoStorage.ref(storagePath);
+      const contentType = file.type.startsWith("video/") ? file.type : "video/mp4";
+      await videoRef.put(file, { contentType: contentType });
+      const downloadUrl = await videoRef.getDownloadURL();
+
+      const previousLink = appState.videoLinks[videoId];
+      const previousName = appState.videoNames[videoId];
+      appState.videoLinks[videoId] = downloadUrl;
+      appState.videoNames[videoId] = file.name;
+      try {
+        await saveStateNow();
+      } catch (error) {
+        if (previousLink === undefined) delete appState.videoLinks[videoId];
+        else appState.videoLinks[videoId] = previousLink;
+        if (previousName === undefined) delete appState.videoNames[videoId];
+        else appState.videoNames[videoId] = previousName;
+        updateDashboardStats();
+        throw error;
+      }
+      openVideoModal(videoId);
+      if (appState.activeMainTab === "biblioteca") renderVideosLibrary();
+      showToast(`Vídeo "${file.name}" enviado e salvo na nuvem!`);
+    }
+
+    async function handleLocalVideoSelect(event) {
+      const file = event.target.files[0];
+      if (!file || currentModalVideoId === null) return;
+      const videoId = currentModalVideoId;
+      showToast("Enviando vídeo para o Firebase Storage...");
+      try {
+        await uploadVideoFile(file, videoId);
+      } catch (error) {
+        console.error("Erro ao enviar vídeo para o Firebase Storage:", error);
+        showToast("Falha ao enviar o vídeo. Verifique o Storage e as regras de acesso.");
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    async function quickBindVideoFile(event, videoId) {
+      const file = event.target.files[0];
+      if (!file) return;
+      showToast("Enviando vídeo para o Firebase Storage...");
+      try {
+        await uploadVideoFile(file, videoId);
+      } catch (error) {
+        console.error("Erro ao enviar vídeo para o Firebase Storage:", error);
+        showToast("Falha ao enviar o vídeo. Verifique o Storage e as regras de acesso.");
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    function saveVideoUrlFromModal() {
+      if (!currentModalVideoId) return;
+      const val = document.getElementById("modal-url-input").value.trim();
+      if (!val) return;
+
+      appState.videoLinks[currentModalVideoId] = val;
+      appState.videoNames[currentModalVideoId] = val;
+      saveState();
+      openVideoModal(currentModalVideoId);
+      if (appState.activeMainTab === "biblioteca") renderVideosLibrary();
+      showToast("Referência de vídeo atualizada!");
+    }
+
+    // =========================================================================
+    // 7. CHECKLISTS, ESTATÍSTICAS E BACKUP JSON
+    // =========================================================================
+    function toggleDrill(drillId, dayId) {
+      appState.completedDrills[drillId] = !appState.completedDrills[drillId];
+
+      // Verifica se todos os drills daquele dia foram marcados para sugerir conclusão automática
+      for (const w of WEEKS_PLAN) {
+        const day = w.days.find(d => d.id === dayId);
+        if (day) {
+          const allDrills = day.blocks.flatMap(b => b.drills);
+          const allChecked = allDrills.every(d => !!appState.completedDrills[d.id]);
+          if (allChecked) {
+            appState.completedDays[dayId] = true;
+          }
+          break;
+        }
+      }
+
+      saveState();
+      renderWeekView();
+    }
+
+    function toggleDay(dayId) {
+      const newVal = !appState.completedDays[dayId];
+      appState.completedDays[dayId] = newVal;
+
+      // Marca ou desmarca todos os exercícios do dia junto
+      for (const w of WEEKS_PLAN) {
+        const day = w.days.find(d => d.id === dayId);
+        if (day) {
+          day.blocks.forEach(b => {
+            b.drills.forEach(d => {
+              appState.completedDrills[d.id] = newVal;
+            });
+          });
+          break;
+        }
+      }
+
+      saveState();
+      renderWeekView();
+      if (newVal) showToast("Sessão de treino concluída! Bom trabalho na areia!");
+    }
+
+    function saveDayNote(dayId, text) {
+      appState.dayNotes[dayId] = text;
+      saveState();
+    }
+
+    function updateDashboardStats() {
+      let totalDrills = 0;
+      let doneDrills = 0;
+      let totalDays = 0;
+      let doneDays = 0;
+      let thursdaysDone = 0;
+      let sundaysDone = 0;
+
+      WEEKS_PLAN.forEach(week => {
+        let weekTotalDrills = 0;
+        let weekDoneDrills = 0;
+
+        week.days.forEach(day => {
+          totalDays++;
+          if (appState.completedDays[day.id]) {
+            doneDays++;
+            if (day.id.endsWith("thu")) thursdaysDone++;
+            if (day.id.endsWith("sun")) sundaysDone++;
+          }
+
+          day.blocks.forEach(block => {
+            block.drills.forEach(drill => {
+              totalDrills++;
+              weekTotalDrills++;
+              if (appState.completedDrills[drill.id]) {
+                doneDrills++;
+                weekDoneDrills++;
+              }
+            });
+          });
+        });
+
+        const weekPct = weekTotalDrills > 0 ? Math.round((weekDoneDrills / weekTotalDrills) * 100) : 0;
+        const badge = document.getElementById(`week-badge-${week.week}`);
+        if (badge) {
+          badge.textContent = `${weekPct}%`;
+          if (weekPct === 100) {
+            badge.className = "text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400";
+          } else if (weekPct > 0) {
+            badge.className = "text-[11px] font-bold px-2 py-0.5 rounded-full bg-sand-500/20 text-sand-400";
+          } else {
+            badge.className = "text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300";
+          }
+        }
+      });
+
+      const overallPct = totalDrills > 0 ? Math.round((doneDrills / totalDrills) * 100) : 0;
+      document.getElementById("overall-percent").textContent = `${overallPct}%`;
+      document.getElementById("overall-progress-bar").style.width = `${overallPct}%`;
+      document.getElementById("stats-days-done").textContent = `${doneDays}/${totalDays}`;
+      document.getElementById("stats-drills-done").textContent = `${doneDrills}/${totalDrills}`;
+      document.getElementById("stats-thursday").textContent = thursdaysDone;
+      document.getElementById("stats-sunday").textContent = sundaysDone;
+
+      const linkedCount = VIDEOS_DATA.filter(v => !!appState.videoLinks[v.id]).length;
+      document.getElementById("stats-videos-linked").textContent = `${linkedCount}/10`;
+    }
+
+    function exportBackup() {
+      const dataStr = JSON.stringify(appState, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup-treinos-futevolei-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Backup JSON exportado!");
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          appState = { ...appState, ...imported };
+          saveState();
+          renderWeekView();
+          if (appState.activeMainTab === "biblioteca") renderVideosLibrary();
+          showToast("Backup importado com sucesso!");
+        } catch (err) {
+          showToast("Arquivo JSON inválido.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openResetModal() {
+      const m = document.getElementById("reset-modal");
+      m.classList.remove("hidden");
+      m.classList.add("flex");
+    }
+
+    function closeResetModal() {
+      const m = document.getElementById("reset-modal");
+      m.classList.add("hidden");
+      m.classList.remove("flex");
+    }
+
+    function confirmResetProgress() {
+      appState.completedDrills = {};
+      appState.completedDays = {};
+      appState.dayNotes = {};
+      saveState();
+      closeResetModal();
+      renderWeekView();
+      showToast("Progresso resetado!");
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-msg").textContent = msg;
+      toast.classList.remove("hidden");
+      toast.classList.add("flex");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add("hidden");
+        toast.classList.remove("flex");
+      }, 3000);
+    }
+
+    // Fechar modais com ESC
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        closeVideoModal();
+        closeResetModal();
+      }
+    });
+
+    // Inicialização
+    window.addEventListener("DOMContentLoaded", () => {
+      subscribeToSharedState();
+    });
+  </script>
+</body>
+</html>
